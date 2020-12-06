@@ -36,45 +36,39 @@
   </div>
 
   <script>
+    update = (state) => {
+      d = document.querySelector('[fw-if="isPageLogIn"]');
+      d.style.display = (state.isPageLogIn) ? null : 'none';
+
+      d = document.querySelector('[fw-if="isPageMain"]');
+      d.style.display = (state.isPageMain) ? null : 'none';
+
+      d = document.querySelector('[fw-if="isFormInvalid"]');
+      d.style.display = (state.isFormInvalid) ? null : 'none';
+
+      d = document.querySelector('[fw-content="validationMessage"]');
+      d.innerHTML = state.validationMessage;
+
+      d = document.querySelector('[fw-content="username"]');
+      d.innerHTML = state.validationMessage;
+
+      d = document.querySelector('[fw-content="username"]');
+      d.innerHTML = state.username;
+
+    }
+
+
     window.createApp = ({
       rootElementId,
       initialState,
       handlers
     }) => {
-
-      refresh = () => {
-        if (!initialState.isPageLogIn) {
-          d = document.querySelector('[fw-if="isPageLogIn"]');
-          d.style.display = 'none';
-        }
-
-        if (!initialState.isPageMain) {
-          d = document.querySelector('[fw-if="isPageMain"]');
-          d.style.display = 'none';
-        }
-
-        if (!initialState.isFormInvalid) {
-          d = document.querySelector('[fw-if="isFormInvalid"]');
-          d.style.display = 'none';
-        }
-
-        d = document.querySelector('[fw-content="validationMessage"]');
-        d.innerHTML = initialState.validationMessage;
-
-        d = document.querySelector('[fw-content="username"]');
-        d.innerHTML = initialState.validationMessage;
-
-        d = document.querySelector('[fw-content="username"]');
-        d.innerHTML = initialState.username;
-
-      }
-      refresh();
+      update(initialState);
 
       x = document.querySelector('[fw-on\\:submit]');
       x.addEventListener('submit', (event) => {
-        response = handlers.submitLogIn(initialState, event)
-        initialState = response;
-        refresh();
+        initialState = handlers.submitLogIn(initialState, event)
+        update(initialState);
       });
 
       x = document.querySelectorAll('[fw-on\\:change]');
@@ -91,10 +85,10 @@
             default:
               break;
           }
-          console.log(initialState);
+          update(initialState);
         })
       });
-      
+
     }
   </script>
 
