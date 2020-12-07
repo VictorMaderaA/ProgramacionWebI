@@ -36,59 +36,49 @@
   </div>
 
   <script>
-    update = (state) => {
-      d = document.querySelector('[fw-if="isPageLogIn"]');
-      d.style.display = (state.isPageLogIn) ? null : 'none';
+    let availableEvents = [
+      'submit',
+      'change'
+    ];
 
-      d = document.querySelector('[fw-if="isPageMain"]');
-      d.style.display = (state.isPageMain) ? null : 'none';
-
-      d = document.querySelector('[fw-if="isFormInvalid"]');
-      d.style.display = (state.isFormInvalid) ? null : 'none';
-
-      d = document.querySelector('[fw-content="validationMessage"]');
-      d.innerHTML = state.validationMessage;
-
-      d = document.querySelector('[fw-content="username"]');
-      d.innerHTML = state.validationMessage;
-
-      d = document.querySelector('[fw-content="username"]');
-      d.innerHTML = state.username;
-
+    updateIf = (root, state, handlers) => {
+      document.querySelectorAll('[fw-if]').forEach(e => {
+        e.style.display = (state[e.getAttribute('fw-if')]) ? null : 'none';
+      });
     }
-
+    updateContent = (root, state, handlers) => {
+      document.querySelectorAll('[fw-content]').forEach(e => {
+        e.innerHTML = state[e.getAttribute('fw-content')];
+      });
+    }
+    update = (root, state, handlers) => {
+      updateIf(root, state, handlers);
+      updateContent(root, state, handlers);
+    }
+    getAttr = (attribute) => {
+      element = document.querySelector('[fw-attr\\:value=' + attribute + ']')
+      return element;
+    }
 
     window.createApp = ({
       rootElementId,
       initialState,
       handlers
     }) => {
-      update(initialState);
+      update(rootElementId, initialState, handlers);
 
-      x = document.querySelector('[fw-on\\:submit]');
-      x.addEventListener('submit', (event) => {
-        initialState = handlers.submitLogIn(initialState, event)
-        update(initialState);
-      });
-
-      x = document.querySelectorAll('[fw-on\\:change]');
-      x.forEach(element => {
-        element.addEventListener('change', (event) => {
-          v = event.target.value;
-          switch (element.getAttribute('fw-on:change')) {
-            case 'changeUsername':
-              initialState = handlers.changeUsername(initialState, event);
-              break;
-            case 'changePassword':
-              initialState = handlers.changePassword(initialState, event);
-              break;
-            default:
-              break;
-          }
-          update(initialState);
-        })
-      });
-
+      setListeners = () => {
+        availableEvents.forEach(pEvent => {
+          document.querySelectorAll('[' + 'fw-on\\:' + pEvent + ']').forEach(e => {
+            e.addEventListener(pEvent, (event) => {
+              handler = handlers[e.getAttribute('fw-on:' + pEvent)];
+              initialState = handler(initialState, event);
+              update(rootElementId, initialState, handlers);
+            });
+          });
+        });
+      }
+      setListeners();
     }
   </script>
 
@@ -105,6 +95,7 @@
       },
       handlers: {
         changeUsername: (currentState, event) => {
+          console.log(1);
           const username = event.target.value;
           return {
             ...currentState,
@@ -113,6 +104,7 @@
           };
         },
         changePassword: (currentState, event) => {
+          console.log(2);
           const password = event.target.value;
           return {
             ...currentState,
@@ -121,6 +113,7 @@
           };
         },
         submitLogIn: (currentState, event) => {
+          console.log(3);
           event.preventDefault();
 
           if (currentState.username === "") {
