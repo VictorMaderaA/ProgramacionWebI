@@ -36,28 +36,38 @@
   </div>
 
   <script>
-    let availableEvents = [
+    // Listado de eventos validos por el framework
+    var availableEvents = [
       'submit',
       'change'
     ];
 
+    // Método para ocultar o mostrar adecuadamente elementos con etiqueta fw-if 
     updateIf = (root, state, handlers) => {
       document.querySelectorAll('[fw-if]').forEach(e => {
         e.style.display = (state[e.getAttribute('fw-if')]) ? null : 'none';
       });
     }
+    // Método para actualizar contenido de elementos con etiqueta fw-content
     updateContent = (root, state, handlers) => {
       document.querySelectorAll('[fw-content]').forEach(e => {
         e.innerHTML = state[e.getAttribute('fw-content')];
       });
     }
+    // Método update para actualizar la vista
     update = (root, state, handlers) => {
       updateIf(root, state, handlers);
       updateContent(root, state, handlers);
     }
+    // Método para obtener el valor del elemento con atributo fw-attr:value y valor {attribute} como parámetro
     getAttr = (attribute) => {
       element = document.querySelector('[fw-attr\\:value=' + attribute + ']')
-      return element;
+      return element.value;
+    }
+    // Método para establecer el valor del elemento con atributo fw-attr:value y valor {attribute} como parámetro
+    setAttr = (attribute, value) => {
+      element = document.querySelector('[fw-attr\\:value=' + attribute + ']')
+      element.value = value;
     }
 
     window.createApp = ({
@@ -65,14 +75,21 @@
       initialState,
       handlers
     }) => {
+      //Actualizamos la vista con los valores iniciales
       update(rootElementId, initialState, handlers);
 
+      // Método para establecer los eventos correspondientes según etiqueta fw-on:{event}
       setListeners = () => {
+        // Para cada evento aceptado por el framework
         availableEvents.forEach(pEvent => {
+          // Buscamos todos los elementos con evento pEvent y realizamos para cada uno
           document.querySelectorAll('[' + 'fw-on\\:' + pEvent + ']').forEach(e => {
+            // Establecemos el Event Listener Adecuado para el elemento
             e.addEventListener(pEvent, (event) => {
+              //Obtenemos el Handler adecuado y lo corremos
               handler = handlers[e.getAttribute('fw-on:' + pEvent)];
               initialState = handler(initialState, event);
+              // Actualizamos la vista con el estado actual
               update(rootElementId, initialState, handlers);
             });
           });
