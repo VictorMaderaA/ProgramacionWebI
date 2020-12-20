@@ -60,20 +60,25 @@
         e.innerHTML = state[e.getAttribute('fw-content')];
       });
     }
+    // Método para actualizar valor de elementos con etiqueta fw-attr:value
+    updateValues = (root, state, handlers) => {
+      document.querySelectorAll('[fw-attr\\:value]').forEach(e => {
+        e.value = state[e.getAttribute('fw-attr:value')];
+      });
+    }
+    // Método para actualizar style de elementos con etiqueta fw-attr:style
+    updateStyle = (root, state, handlers) => {
+      document.querySelectorAll('[fw-attr\\:style]').forEach(e => {
+        e.style = state[e.getAttribute('fw-attr:style')];
+      });
+    }
+
     // Método update para actualizar la vista
     update = (root, state, handlers) => {
       updateIf(root, state, handlers);
       updateContent(root, state, handlers);
-    }
-    // Método para obtener el valor del elemento con atributo fw-attr:value y valor {attribute} como parámetro
-    getAttr = (attribute) => {
-      element = document.querySelector('[fw-attr\\:value=' + attribute + ']')
-      return element.value;
-    }
-    // Método para establecer el valor del elemento con atributo fw-attr:value y valor {attribute} como parámetro
-    setAttr = (attribute, value) => {
-      element = document.querySelector('[fw-attr\\:value=' + attribute + ']')
-      element.value = value;
+      updateValues(root, state, handlers);
+      updateStyle(root, state, handlers);
     }
 
     window.createApp = ({
