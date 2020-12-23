@@ -1,41 +1,18 @@
 const createServer = require("./create_server.js");
+const reqHandler = require("./js/requestHandlers.js");
 
-const get = (request, response) => {
-  // ...📝
-
-  response.send(
-    "200"
-    // ...,
-    // ...
-  );
-};
-
-const post = (request, response) => {
-  // ...📝
-
-  response.send(
-    "200"
-    // ...,
-    // ...
-  );
-};
 
 const requestListener = (request, response) => {
-  switch (request.method) {
-    case "GET": {
-      return get(request, response);
-    }
-    case "POST": {
-      return post(request, response);
-    }
-    default: {
-      return response.send(
-        404,
-        { "Content-Type": "text/plain" },
-        "The server only supports HTTP methods GET and POST"
-      );
-    }
+
+  if(request === undefined){
+    return response.send(
+      500,
+      { "Content-Type": "text/plain" },
+      "Server Error\nRequest Undefined"
+    );
   }
+
+  reqHandler(request, response);
 };
 
 const server = createServer((request, response) => {
