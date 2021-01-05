@@ -106,7 +106,18 @@ updateValues = (root, state, handlers) => {
 // Método para actualizar style de elementos con etiqueta fw-attr:style
 updateStyle = (root, state, handlers) => {
     document.querySelectorAll('[fw-attr\\:style]').forEach(e => {
-        e.style = state[e.getAttribute('fw-attr:style')];
+        let style = state[e.getAttribute('fw-attr:style')];
+        if (typeof style === "object") {
+            for (const property in style) {
+                let val = style[property];
+                if (typeof val === "number"){
+                    val = val+'px';
+                }
+                e.style[property] = val
+            }
+        } else {
+            e.style = state[e.getAttribute('fw-attr:style')];
+        }
     });
 }
 
@@ -135,7 +146,8 @@ update = (root, state, handlers) => {
 window.createApp = ({
                         rootElementId,
                         initialState,
-                        handlers
+                        handlers,
+                        methods
                     }) => {
     //Actualizamos la vista con los valores iniciales
     update(rootElementId, initialState, handlers);
@@ -150,7 +162,10 @@ window.createApp = ({
                 e.addEventListener(pEvent, (event) => {
                     //Obtenemos el Handler adecuado y lo corremos
                     handler = handlers[e.getAttribute('fw-on:' + pEvent)];
-                    initialState = handler(initialState, event);
+                    _state = handler(initialState, event);
+                    if (_state !== undefined) {
+                        initialState = _state
+                    }
                     // Actualizamos la vista con el estado actual
                     update(rootElementId, initialState, handlers);
                 });
@@ -158,4 +173,45 @@ window.createApp = ({
         });
     }
     setListeners();
+
+    //----------------------------------------------------------------------
+    // GAME ADDONS
+    //----------------------------------------------------------------------
+
+    calcDelta = () => {
+        const now = Date.now();
+        initialState.delta.val = now - initialState.delta.lastUpdate;
+        initialState.delta.lastUpdate = now;
+    }
+
+    internalGameLoop = () => {
+        calcDelta();
+        let _state = methods.gameLoop(initialState);
+        if (_state !== undefined) {
+            initialState = _state
+        }
+        update(rootElementId, initialState, handlers);
+    }
+
+    internalGameInit = () => {
+        initialState.delta = {}
+        initialState.delta.lastUpdate = Date.now();
+
+        if (methods.gameInit !== undefined) {
+            let _state = methods.gameInit(initialState);
+            if (_state !== undefined) {
+                initialState = _state
+            }
+        }
+    }
+
+
+    if (methods.gameLoop !== undefined) {
+        let tick = (gm = initialState.game) ? (gm.tickTime ?? 1000) : 1000;
+        console.log('Starting Game Loop. game.tickTime = ' + tick);
+        internalGameInit();
+        setInterval(internalGameLoop, tick);
+    }
+
+
 }

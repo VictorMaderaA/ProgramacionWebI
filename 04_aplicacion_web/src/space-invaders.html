@@ -1,80 +1,36 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:fw-attr="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:fw-attr="http://www.w3.org/1999/xhtml" fw-on:keydown="onKeyDown" fw-on:keyup="onKeyUp">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Space Invaders</title>
-    <link rel="stylesheet" href="../css/space-invaders.css">
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Space Invaders</title>
+     <link rel="stylesheet" href="../css/space-invaders.css">
 </head>
+
 <body>
-<div>
-    <div fw-if="isPlayerAlive"
-         fw-attr:class="player"></div>
-    <img fw-attr:src="alien1"
-         fw-attr:class="alien" src="" alt=""/>
-    <img fw-attr:src="alien1"
-         fw-attr:class="alien" src="" alt=""/>
-    <img fw-attr:src="alien1"
-         fw-attr:class="alien" src="" alt=""/>
-    <img fw-attr:src="alien1"
-         fw-attr:class="alien" src="" alt=""/>
-    <img fw-attr:src="alien1"
-         fw-attr:class="alien" src="" alt=""/>
-    <br>
-    <img fw-attr:src="alien2"
-         fw-attr:class="alien" src="" alt=""/>
-    <img fw-attr:src="alien2"
-         fw-attr:class="alien" src="" alt=""/>
-    <img fw-attr:src="alien2"
-         fw-attr:class="alien" src="" alt=""/>
-    <img fw-attr:src="alien2"
-         fw-attr:class="alien" src="" alt=""/>
-    <img fw-attr:src="alien2"
-         fw-attr:class="alien" src="" alt=""/>
-</div>
-<script type="text/javascript" src="../js/framework.js"></script>
+     <div>
+          <div fw-if="isPlayerAlive" fw-attr:class="player"></div>
+          <img fw-attr:src="alien1" fw-attr:class="alien" src="" alt="" />
+          <img fw-attr:src="alien1" fw-attr:class="alien" src="" alt="" />
+          <img fw-attr:src="alien1" fw-attr:class="alien" src="" alt="" />
+          <img fw-attr:src="alien1" fw-attr:class="alien" src="" alt="" />
+          <img fw-attr:src="alien1" fw-attr:class="alien" src="" alt="" />
+          <br>
+          <img fw-attr:src="alien2" fw-attr:class="alien" src="" alt="" />
+          <img fw-attr:src="alien2" fw-attr:class="alien" src="" alt="" />
+          <img fw-attr:src="alien2" fw-attr:class="alien" src="" alt="" />
+          <img fw-attr:src="alien2" fw-attr:class="alien" src="" alt="" />
+          <img fw-attr:src="alien2" fw-attr:class="alien" src="" alt="" />
+
+          <div fw-attr:style="playerStyle" fw-attr:class="player"></div>
+
+     </div>
+     <script type="text/javascript" src="../js/framework.js"></script>
+     <script type="module" src="../js/fw-space-invaders.js"></script>
 </body>
 <script>
-    const app = {
-        rootElementId: "root",
-        initialState: {
-            class: {
-                player: 'playerAlive',
-                alien: 'alien'
-            },
-            src: {
-                alien1: '/assets/InvaderA1.svg',
-                alien2: '/assets/InvaderB1.svg'
-            },
-            loops: {
-                alien: false
-            },
-            isPlayerAlive: true,
-            playerClass: 'player'
-        },
-        handlers: {
-
-        },
-        methods: {
-
-        }
-    }
-    window.createApp(app)
-
-    startTick = () => {
-        console.log(1)
-        setInterval(this.main, 1000);
-    }
-    main = () => {
-        console.log(app.initialState.src.alien1)
-        app.initialState.src.alien1 = app.initialState.loops.alien? '/assets/InvaderA1.svg': '/assets/InvaderA2.svg';
-        app.initialState.loops.alien = !app.initialState.loops.alien;
-
-        app.initialState.src.alien2 = app.initialState.loops.alien? '/assets/InvaderB1.svg': '/assets/InvaderB2.svg';
-        app.initialState.loops.alien = !app.initialState.loops.alien;
-        window.createApp(app)
-    }
-    startTick()
 
 </script>
+
 </html>
