@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<title>pong</title>
+		<meta name="description" content="">
+		<meta name="author" content="satur">
+
+		<meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+		<!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+		<link rel="shortcut icon" href="/favicon.ico">
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+	</head>
+	<style type="text/css">
+		.juego {
+			background-color: #000000;
+			border-color : #FFFF00;
+			border-style : solid;
+			width : 600px;
+			height: 400px;
+		}
+		.bola{
+			position: absolute;
+			width: 20px;
+			height: 20px;
+			top: 11px;
+			left: 383px;
+			background-color: #FFFF00;
+		}
+		.raqueta {
+			position: absolute;
+			width: 20px;
+			height: 80px;
+			background-color: #FFFF00;
+		}
+		.info {
+			width: 600px;
+			height: 150px;
+			padding: 3px;
+			background-color: #000000;
+			border-bottom-left-radius: 25px;
+			border-bottom-right-radius: 25px;
+			border-color : #FFFF00;
+			border-style : solid;
+		}
+		
+		.textoestatico {
+			color: #FFFFFF;
+			font-family : "Arial";
+			font-weight : bold;
+		}
+	</style>
+
+	<body>
+		<div align="center">
+			<div class="juego">
+				<div class="bola" id="bola"></div>
+				<div class="raqueta" id="j1"></div>
+				<div class="raqueta" id="j2"></div>
+			</div>
+			<table class="info">
+				<tr>
+					<td  align="center"><span class="textoestatico">Jugador 1</span></td>
+					<td  align="center"><span class="textoestatico">Jugador 2</span></td>
+				</tr>
+				<tr>
+					<td align="center"><span class="textoestatico" id="puntosj1">0</span></td>
+					<td  align="center"><span class="textoestatico" id="puntosj2">0</span></td>
+				</tr>
+			</table>
+		</div>
+		<script type="text/javascript" src="png2.js"></script>
+	</body>
+
+	<script>
+
+	</script>
+</html>

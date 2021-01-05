@@ -27,21 +27,34 @@ getHandlers = (request) => {
                 fs.readFileSync('./src/space-invaders.html')
             );
             break;
-        case '/favicon.ico':
-            response(
-                "200", {
-                    "content-type": "image/x-icon"
-                },
-                fs.readFileSync('./assets/favicon.ico')
-            );
-            break;
         default:
+            headers = {};
+            switch (request.path.split('.').pop()){
+                case 'svg':
+                    headers['content-type'] = 'image/svg+xml'
+                    break;
+                case 'ico':
+                    headers['content-type'] = 'image/x-icon'
+                    break;
+                case 'webp':
+                    headers['content-type'] = 'image/webp'
+                    break;
+                case 'png':
+                    headers['content-type'] = 'image'
+                    break;
+                case 'jpeg':
+                    headers['content-type'] = 'image/jpeg'
+                    break;
+                case 'css':
+                    headers['content-type'] = 'text/css'
+                    break;
+                case 'js':
+                    headers['content-type'] = 'text/javascript'
+                    break;
+            }
             response(
-                404, {
-                    "content-type": "text/html"
-                },
-                "The requested URL '" + request.path + "' was not found on this server."
-
+                200, headers,
+                fs.readFileSync('.'+request.path)
             );
             break;
     }
