@@ -31,7 +31,7 @@ getHandlers = (request) => {
             headers = {};
             switch (request.path.split('.').pop()){
                 case 'svg':
-                    headers['content-type'] = 'image/svg+xml'
+                    headers['content-type'] = 'image/svg+xml';
                     break;
                 case 'ico':
                     headers['content-type'] = 'image/x-icon'
@@ -73,9 +73,11 @@ reqHandler = (request, server) => {
     switch (request.method) {
         case "GET": {
             getHandlers(request);
+            break;
         }
         case "POST": {
             postHandlers(request);
+            break;
         }
         default: {
             return response(
@@ -86,6 +88,9 @@ reqHandler = (request, server) => {
             );
         }
     }
+}
+function test(){
+
 }
 
 module.exports = reqHandler;

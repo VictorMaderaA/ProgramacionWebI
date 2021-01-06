@@ -31,6 +31,17 @@ const app = {
                 case 38: //Arriba
                     state.keyShoot = true;
                     break;
+                case 32: //Space
+                    if(!state._game.playing){
+                        state._game.playing = true
+                    }
+                    break;
+                case 82: //R
+                    if(state._game.playing){
+                        let game = document.getElementById('game');
+                        state._game.initGameDom(game);
+                    }
+                    break;
                 default:
                     break;
             }
@@ -60,27 +71,13 @@ const app = {
 
             state._game = new Game();
             let game = document.getElementById('game');
-
-            state._game.createGameEntity();
-            var el = document.createElement('div');
-            el.setAttribute('fw-attr:style', '_game.gameEntity._style')
-            game.append(el)
-
-            state._game.setupAliens();
-            var el = document.createElement('div');
-            el.setAttribute('fw-attr:style', '_game.aliensEntity._style')
-            game.append(el)
-
-
-            for (const aliensKey in state._game.aliens) {
-                let el = document.createElement('img');
-                el.setAttribute('fw-attr:style', '_game.aliens.'+aliensKey+'._style')
-                el.setAttribute('fw-attr:src', '_game.aliens.'+aliensKey+'._src')
-                game.append(el)
-            }
+            state._game.initGameDom(game);
             return state
         },
         gameLoop: (state) => {
+            if(!state._game.playing){
+                return;
+            }
             // state = app.methods.runCustomLoop(state, app.initialState.game.loops);
             state = app.methods.playerLoop(state);
             state._game.update(state.delta.val)
