@@ -88,25 +88,25 @@ var availableEvents = [
 
 updateIf = (root, state, handlers) => {
     document.querySelectorAll('[fw-if]').forEach(e => {
-        e.style.display = (state[e.getAttribute('fw-if')]) ? null : 'none';
+        e.style.display = getStateAttribute(state, e.getAttribute('fw-if')) ? null : 'none';
     });
 }
 // Método para actualizar contenido de elementos con etiqueta fw-content
 updateContent = (root, state, handlers) => {
     document.querySelectorAll('[fw-content]').forEach(e => {
-        e.innerHTML = state[e.getAttribute('fw-content')];
+        e.innerHTML = getStateAttribute(state, e.getAttribute('fw-content'));
     });
 }
 // Método para actualizar valor de elementos con etiqueta fw-attr:value
 updateValues = (root, state, handlers) => {
     document.querySelectorAll('[fw-attr\\:value]').forEach(e => {
-        e.value = state[e.getAttribute('fw-attr:value')];
+        e.value = getStateAttribute(state, e.getAttribute('fw-attr:value'));
     });
 }
 // Método para actualizar style de elementos con etiqueta fw-attr:style
 updateStyle = (root, state, handlers) => {
     document.querySelectorAll('[fw-attr\\:style]').forEach(e => {
-        let style = state[e.getAttribute('fw-attr:style')];
+        let style = getStateAttribute(state, e.getAttribute('fw-attr:style'));
         if (typeof style === "object") {
             for (const property in style) {
                 let val = style[property];
@@ -116,20 +116,20 @@ updateStyle = (root, state, handlers) => {
                 e.style[property] = val
             }
         } else {
-            e.style = state[e.getAttribute('fw-attr:style')];
+            e.style = style;
         }
     });
 }
 
 updateClass = (root, state, handlers) => {
     document.querySelectorAll('[fw-attr\\:class]').forEach(e => {
-        e.className = state.class[e.getAttribute('fw-attr:class')];
+        e.className = getStateAttribute(state, e.getAttribute('fw-attr:class'));
     });
 }
 
 updateSrc = (root, state, handlers) => {
     document.querySelectorAll('[fw-attr\\:src]').forEach(e => {
-        e.src = state.src[e.getAttribute('fw-attr:src')];
+        e.src = getStateAttribute(state, e.getAttribute('fw-attr:src'));
     });
 }
 
@@ -141,6 +141,20 @@ update = (root, state, handlers) => {
     updateStyle(root, state, handlers);
     updateClass(root, state, handlers);
     updateSrc(root, state, handlers);
+}
+
+getStateAttribute = (state, searchStr) => {
+    let val = state;
+    for (const e of searchStr.split(".")) {
+        if (val.hasOwnProperty(e)){
+            val = val[e]
+        }else{
+            console.error('Could not Find prop: ' + searchStr + ' >>> ' + e + ' | ' + val + JSON.stringify(val))
+            val = undefined;
+            break;
+        }
+    }
+    return Object.assign(val);
 }
 
 window.createApp = ({

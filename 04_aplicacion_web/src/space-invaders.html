@@ -2,32 +2,26 @@
 <html lang="en" xmlns:fw-attr="http://www.w3.org/1999/xhtml" fw-on:keydown="onKeyDown" fw-on:keyup="onKeyUp">
 
 <head>
-     <meta charset="UTF-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>Space Invaders</title>
-     <link rel="stylesheet" href="../css/space-invaders.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Invaders</title>
+    <link rel="stylesheet" href="../css/space-invaders.css">
 </head>
 
 <body>
-     <div>
-          <div fw-if="isPlayerAlive" fw-attr:class="player"></div>
-          <img fw-attr:src="alien1" fw-attr:class="alien" src="" alt="" />
-          <img fw-attr:src="alien1" fw-attr:class="alien" src="" alt="" />
-          <img fw-attr:src="alien1" fw-attr:class="alien" src="" alt="" />
-          <img fw-attr:src="alien1" fw-attr:class="alien" src="" alt="" />
-          <img fw-attr:src="alien1" fw-attr:class="alien" src="" alt="" />
-          <br>
-          <img fw-attr:src="alien2" fw-attr:class="alien" src="" alt="" />
-          <img fw-attr:src="alien2" fw-attr:class="alien" src="" alt="" />
-          <img fw-attr:src="alien2" fw-attr:class="alien" src="" alt="" />
-          <img fw-attr:src="alien2" fw-attr:class="alien" src="" alt="" />
-          <img fw-attr:src="alien2" fw-attr:class="alien" src="" alt="" />
+<div id="game">
+    <!--          <div fw-if="isPlayerAlive" fw-attr:class="class.player"></div>-->
+    <!--          <img fw-attr:src="src.alien1" fw-attr:class="class.alien" src="" alt="" />-->
+    <!--          <br>-->
+    <!--          <img fw-attr:src="src.alien2" fw-attr:class="class.alien" src="" alt="" />-->
 
-          <div fw-attr:style="playerStyle" fw-attr:class="player"></div>
+    <!--          <div fw-attr:style="playerStyle" fw-attr:class="class.player"></div>-->
+</div>
+<script type="text/javascript" src="../js/framework.js"></script>
 
-     </div>
-     <script type="text/javascript" src="../js/framework.js"></script>
-     <script type="module" src="../js/fw-space-invaders.js"></script>
+<!--<p fw-if="_game" fw-content="_game.aliens"></p>-->
+
+<script type="module" src="../js/fw-space-invaders.js"></script>
 </body>
 <script>
 

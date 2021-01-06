@@ -1,7 +1,0 @@
-const game = {
-    gameObjects: {
-
-    }
-
-    create
-};
