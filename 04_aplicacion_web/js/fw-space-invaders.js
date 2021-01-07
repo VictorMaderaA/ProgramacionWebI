@@ -32,14 +32,16 @@ const app = {
                     state.keyShoot = true;
                     break;
                 case 32: //Space
-                    if(!state._game.playing){
-                        state._game.playing = true
-                    }
+                        if(state._game.playing){
+                            //Shoot
+                        }else{
+                            state._game.playing = true
+                        }
+
                     break;
                 case 82: //R
                     if(state._game.playing){
-                        let game = document.getElementById('game');
-                        state._game.initGameDom(game);
+                        state._game.initGameDom();
                     }
                     break;
                 default:
@@ -60,6 +62,9 @@ const app = {
                 default:
                     break;
             }
+        },
+        clickAlien(state, event){
+            state._game.destroyAlien(event.target.id.split("_")[1]);
         }
     },
     methods: {
@@ -70,8 +75,7 @@ const app = {
             state.keyShoot = false;
 
             state._game = new Game();
-            let game = document.getElementById('game');
-            state._game.initGameDom(game);
+            state._game.initGameDom();
             return state
         },
         gameLoop: (state) => {

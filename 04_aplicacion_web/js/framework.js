@@ -141,6 +141,7 @@ update = (root, state, handlers) => {
     updateStyle(root, state, handlers);
     updateClass(root, state, handlers);
     updateSrc(root, state, handlers);
+    setListeners(root, state, handlers);
 }
 
 getStateAttribute = (state, searchStr) => {
@@ -157,36 +158,47 @@ getStateAttribute = (state, searchStr) => {
     return Object.assign(val);
 }
 
+let _listeners = []
+
+// Método para establecer los eventos correspondientes según etiqueta fw-on:{event}
+setListeners = (rootElementId, initialState, handlers) => {
+    // Para cada evento aceptado por el framework
+    availableEvents.forEach(pEvent => {
+        // Buscamos todos los elementos con evento pEvent y realizamos para cada uno
+        let query = '[' + 'fw-on\\:' + pEvent + ']';
+        document.querySelectorAll(query).forEach(e => {
+            let store = {q: query, e: e};
+            if(_listeners.find(x => x.q === store.q && x.e === store.e)){
+                return;
+            }
+            _listeners.push({q: query, e: e})
+            // Establecemos el Event Listener Adecuado para el elemento
+            e.addEventListener(pEvent, (event) => {
+                //Obtenemos el Handler adecuado y lo corremos
+                let handler = handlers[e.getAttribute('fw-on:' + pEvent)];
+                let _state = handler(initialState, event);
+                if (_state !== undefined) {
+                    initialState = _state
+                }
+                // Actualizamos la vista con el estado actual
+                update(rootElementId, initialState, handlers);
+            });
+        });
+    });
+}
+
 window.createApp = ({
                         rootElementId,
                         initialState,
                         handlers,
                         methods
                     }) => {
+
     //Actualizamos la vista con los valores iniciales
     update(rootElementId, initialState, handlers);
 
-    // Método para establecer los eventos correspondientes según etiqueta fw-on:{event}
-    setListeners = () => {
-        // Para cada evento aceptado por el framework
-        availableEvents.forEach(pEvent => {
-            // Buscamos todos los elementos con evento pEvent y realizamos para cada uno
-            document.querySelectorAll('[' + 'fw-on\\:' + pEvent + ']').forEach(e => {
-                // Establecemos el Event Listener Adecuado para el elemento
-                e.addEventListener(pEvent, (event) => {
-                    //Obtenemos el Handler adecuado y lo corremos
-                    handler = handlers[e.getAttribute('fw-on:' + pEvent)];
-                    _state = handler(initialState, event);
-                    if (_state !== undefined) {
-                        initialState = _state
-                    }
-                    // Actualizamos la vista con el estado actual
-                    update(rootElementId, initialState, handlers);
-                });
-            });
-        });
-    }
-    setListeners();
+
+    setListeners(rootElementId, initialState, handlers);
 
     //----------------------------------------------------------------------
     // GAME ADDONS
