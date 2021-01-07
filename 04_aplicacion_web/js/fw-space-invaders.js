@@ -33,14 +33,14 @@ const app = {
                     break;
                 case 32: //Space
                         if(state._game.playing){
-                            //Shoot
+                            state.keyShoot = true;
                         }else{
                             state._game.playing = true
                         }
 
                     break;
                 case 82: //R
-                    if(state._game.playing){
+                    if(state._game.playing || state._game.gameover){
                         state._game.initGameDom();
                     }
                     break;
@@ -57,6 +57,9 @@ const app = {
                     state.keyRight = false;
                     break;
                 case 38: //Arriba
+                    state.keyShoot = false;
+                    break;
+                case 32: //Space
                     state.keyShoot = false;
                     break;
                 default:
@@ -93,16 +96,14 @@ const app = {
         },
         playerLoop(state){
             if(state.keyLeft){
-                console.log(1)
-                state._game.aliensEntity.moveSpeed(-100,0,state.delta.val)
+                state._game.movePlayer(state.delta.val, -1)
             }
             if(state.keyRight){
-                console.log(2)
-                state._game.aliensEntity.moveSpeed(100,0,state.delta.val)
+                state._game.movePlayer(state.delta.val, 1)
             }
 
             if(state.keyShoot){
-
+                state._game.playerShoot();
             }
 
             return state;
