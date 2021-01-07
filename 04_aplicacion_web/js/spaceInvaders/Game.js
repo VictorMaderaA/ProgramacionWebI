@@ -236,6 +236,8 @@ export default class Game {
                 return;
             }
             if (aabbDetection(bulletPlayer, e)) {
+                this._removeEntityFromDestructables(bulletPlayer)
+                this._removeEntityFromDestructables(e)
                 this._destroyPlayerBullet();
                 if(e.type === 'alien'){
                     this.destroyAlien(e);
