@@ -280,7 +280,6 @@ export default class Game {
             } else if((alien.y + alien.h) > this.playerEntity.y){
                 this.playing = false
                 this.gameover = true
-                console.log(alien, this.playerEntity)
             }
         }
 
