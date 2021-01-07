@@ -44,7 +44,7 @@ export default class Game {
             h: 45,
             w: 45,
             s: 1,
-            alienSpeed: 400,
+            alienSpeed: 100,
             srcLoopTime: 300,
             style: {
                 position: 'absolute',
