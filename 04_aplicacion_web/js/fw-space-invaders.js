@@ -67,7 +67,7 @@ const app = {
             }
         },
         clickAlien(state, event){
-            state._game.destroyAlien(event.target.id.split("_")[1]);
+            state._game.alienShoot(state._game.aliens[event.target.id.split("_")[1]]);
         }
     },
     methods: {

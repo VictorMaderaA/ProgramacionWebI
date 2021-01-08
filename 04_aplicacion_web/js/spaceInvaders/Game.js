@@ -16,7 +16,9 @@ export default class Game {
     aliens = [];
 
     playerBulletEntity = null;
+    alienBulletEntity = null;
     currAlienSpeed = 1;
+    playerLives = 3;
 
 
     _getPlayerPos = () => {
@@ -88,7 +90,11 @@ export default class Game {
         this.gameEntity = null;
         this.aliensEntity = null;
         this.playerBulletEntity = null
+        this.alienBulletEntity = null
         this.currAlienSpeed = this.config.alien.alienSpeed;
+        this.playerLives = 3
+        this.deadAliens = 0;
+        this.aliveAliens = 100;
     }
 
 
@@ -121,7 +127,7 @@ export default class Game {
             el.setAttribute('fw-attr:style', '_game.aliens.' + aliensKey + '._style')
             el.setAttribute('fw-attr:src', '_game.aliens.' + aliensKey + '._src')
             el.setAttribute('id', 'alien_' + aliensKey)
-            // el.setAttribute('fw-on:click', 'clickAlien')
+            el.setAttribute('fw-on:click', 'clickAlien')
             gameEl.append(el)
         }
 
@@ -166,13 +172,22 @@ export default class Game {
         return this.playerEntity;
     }
 
-    _createBulletEntity() {
+    _createPlayerBulletEntity() {
         let c = this.config.bullet;
         this.playerBulletEntity = new Entity(0, 0, c.h, c.w, c.s, c.style, this.gameEntity);
         this.playerBulletEntity.type = 'bullet';
         this.entities.push(this.playerBulletEntity);
         this.destructables.push(this.playerBulletEntity)
         return this.playerBulletEntity;
+    }
+
+    _createAlienBulletEntity(alien) {
+        let c = this.config.bullet;
+        this.alienBulletEntity = new Entity(0, 0, c.h, c.w, c.s, c.style, this.gameEntity);
+        this.alienBulletEntity.type = 'bullet';
+        this.entities.push(this.alienBulletEntity);
+        this.destructables.push(this.alienBulletEntity)
+        return this.alienBulletEntity;
     }
 
     _setupAliens() {
@@ -220,16 +235,34 @@ export default class Game {
         if (!this.playing) {
             return;
         }
+
+        if(this.playerLives <= 0){
+            this.playing = false;
+            this.gameover = true;
+            console.log('Player Killed')
+        }
+
+        if(this.aliveAliens <= 0){
+            this.playing = false;
+            this.gameover = true;
+            console.log('Win all aliens killed')
+        }
+
         this._updateAlien(delta);
         this._updateBullets(delta)
     }
 
     _updateBullets(delta) {
+        this._updateAlienBullet(delta)
+        this._updatePlayerBullet(delta)
+    }
+
+    _updatePlayerBullet(delta){
         let bulletPlayer = this.playerBulletEntity;
         if (!bulletPlayer) {
             return;
         }
-        bulletPlayer.moveSpeed(0, this.config.bullet.speedA * -1, delta)
+        bulletPlayer.moveSpeed(0, this.config.bullet.speedP * -1, delta)
 
         this.destructables.forEach(e => {
             if(e === bulletPlayer || e === this.playerEntity){
@@ -250,6 +283,34 @@ export default class Game {
         }
     }
 
+    _updateAlienBullet(delta){
+        let bulletAlien = this.alienBulletEntity;
+        if (!bulletAlien) {
+            return;
+        }
+        bulletAlien.moveSpeed(0, this.config.bullet.speedA, delta)
+
+        this.destructables.forEach(e => {
+            if(e === bulletAlien || e.type === 'alien'){
+                return;
+            }
+            if (aabbDetection(bulletAlien, e)) {
+                this._removeEntityFromDestructables(bulletAlien)
+                this._destroyAlienBullet();
+                if(e.type === 'player'){
+                    console.log('Player Shot')
+                    this.playerLives--;
+                }else{
+                    this._removeEntityFromDestructables(e)
+                }
+            }
+        })
+
+        if (bulletAlien.y > (this.gameEntity.h + this.gameEntity.y)) {
+            this._destroyAlienBullet();
+        }
+    }
+
     _removeEntityFromDestructables(ent){
         var index = this.destructables.indexOf(ent);
         if (index !== -1) this.destructables.splice(index, 1);
@@ -260,15 +321,32 @@ export default class Game {
         this.playerBulletEntity = null;
     }
 
+    _destroyAlienBullet() {
+        this.alienBulletEntity.element.remove();
+        this.alienBulletEntity = null;
+    }
+
     _updateAlien(delta) {
         let alienColide = false
+
+        let dead = 0;
+        let alive = 0;
+        let shoot = Math.random() > 0.95 - 0.01 * this.deadAliens
 
         for (const aliensKey in this.aliens) {
             let alien = this.aliens[aliensKey];
 
             //If dead skip
             if (alien.dead) {
+                dead++;
                 continue;
+            }else{
+                alive++;
+            }
+
+
+            if(shoot && Math.random() > 0.99){
+                this.alienShoot(alien)
             }
 
             //Update Alien Internal
@@ -284,6 +362,9 @@ export default class Game {
                 this.gameover = true
             }
         }
+
+        this.deadAliens = dead;
+        this.aliveAliens = alive;
 
         //Aliens Entity -------------------
         if (alienColide) {
@@ -328,7 +409,7 @@ export default class Game {
         }
         let _ = document.getElementById('game');
 
-        let b = this._createBulletEntity()
+        let b = this._createPlayerBulletEntity()
         b.owner = this.playerEntity;
         b.x = this.playerEntity.x + (this.playerEntity.w / 2);
         b.y = this.playerEntity.y - (this.config.bullet.h);
@@ -337,6 +418,26 @@ export default class Game {
         let gameEl = document.getElementById('_space_game');
         var el = document.createElement('div');
         el.setAttribute('fw-attr:style', '_game.playerBulletEntity._style')
+        b.element = el;
+        gameEl.append(el)
+    }
+
+    alienShoot(alien) {
+        //Si ya existe una bala no pude disparar el jugador
+        if (this.alienBulletEntity) {
+            return;
+        }
+        let _ = document.getElementById('game');
+
+        let b = this._createAlienBulletEntity()
+        b.owner = this.alienBulletEntity;
+        b.x = alien.x + (alien.w / 2);
+        b.y = alien.y + alien.h + (this.config.bullet.h);
+        b.update();
+
+        let gameEl = document.getElementById('_space_game');
+        var el = document.createElement('div');
+        el.setAttribute('fw-attr:style', '_game.alienBulletEntity._style')
         b.element = el;
         gameEl.append(el)
     }
