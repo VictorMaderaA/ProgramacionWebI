@@ -35,6 +35,7 @@ const createServer = (requestHandler) => {
     let req;
     socket.on('data', function (data) {
       let chunk = data.toString();
+      console.log(chunk)
 
       let match = /[a-zA-Z]+ [\/\.a-zA-Z0-9\-]* HTTP\/1\.1/i.test(chunk);
       if (match) {

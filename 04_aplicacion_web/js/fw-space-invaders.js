@@ -34,7 +34,7 @@ const app = {
                 case 32: //Space
                         if(state._game.playing){
                             state.keyShoot = true;
-                        }else{
+                        }else if(!state._game.gameOver){
                             state._game.playing = true
                         }
 

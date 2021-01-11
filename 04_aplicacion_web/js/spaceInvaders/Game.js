@@ -20,6 +20,8 @@ export default class Game {
     currAlienSpeed = 1;
     playerLives = 3;
 
+    points = 0;
+
 
     _getPlayerPos = () => {
         let x = (this.gameEntity.w / 2) - (this.config.player.w / 2);
@@ -71,7 +73,7 @@ export default class Game {
             w: 5,
             s: 1,
             speedP: 500,
-            speedA: 400,
+            speedA: 600,
             style: {
                 position: 'absolute',
                 borderStyle: 'solid'
@@ -94,6 +96,7 @@ export default class Game {
         this.currAlienSpeed = this.config.alien.alienSpeed;
         this.playerLives = 3
         this.deadAliens = 0;
+        this.destructables = [];
         this.aliveAliens = 100;
     }
 
