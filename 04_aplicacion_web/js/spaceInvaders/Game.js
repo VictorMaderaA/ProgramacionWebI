@@ -5,6 +5,8 @@ import {
 
 export default class Game {
 
+    instructions = "Teclas disponibles: Flecha Izquiera, Flecha Derecha, Barra Espacio, 'R', '1', '2', '3'"
+
     entities = [];
     destructables = [];
     playing = false;
@@ -20,11 +22,12 @@ export default class Game {
     currAlienSpeed = 1;
     playerLives = 3;
     points = 0;
+    gameover = false;
 
 
     _getPlayerPos = () => {
         let x = (this.gameEntity.w / 2) - (this.config.player.w / 2);
-        let y = (this.gameEntity.h - this.config.player.h * 1.1)
+        let y = (this.gameEntity.h - this.config.player.h * this.gameEntity.s)
         return {x, y}
     }
 
@@ -35,7 +38,7 @@ export default class Game {
             y: 0,
             h: 600,
             w: 800,
-            s: 1,
+            s:1,
             style: {
                 position: 'absolute',
                 borderStyle: 'solid'
@@ -98,6 +101,7 @@ export default class Game {
         this.destructables = [];
         this.aliveAliens = 100;
         this.points = 0;
+        this.gameover = false;
     }
 
 
@@ -141,14 +145,64 @@ export default class Game {
         gameEl.append(el)
 
 
-        this.pointEntity = new Entity(this.gameEntity.x, this.gameEntity.x + this.gameEntity.h + 10, 20, 100, 1, {
+        this.pointEntity = new Entity(0, this.gameEntity.y + this.gameEntity.h + 10, 50, this.gameEntity.w / this.gameEntity.s , 1, {
             position: 'absolute'
         }, this.gameEntity);
-        this.entities.push(this.playerEntity);
+        this.pointEntity.style['text-align'] = 'center'
+        this.pointEntity.style['font-size'] = 30 * this.pointEntity.s + 'px'
+        this.entities.push(this.pointEntity);
         var el = document.createElement('div');
         el.setAttribute('fw-attr:style', '_game.pointEntity._style')
         el.setAttribute('fw-content', '_game.currPoints')
         gameEl.append(el)
+
+
+        this.livesEntity = new Entity(0, this.pointEntity.y + this.pointEntity.h, 50, this.gameEntity.w / this.gameEntity.s, 1, {
+            position: 'absolute'
+        }, this.gameEntity);
+        this.livesEntity.style['text-align'] = 'center'
+        this.livesEntity.style['font-size'] = 30 * this.livesEntity.s + 'px'
+        this.entities.push(this.livesEntity);
+        var el = document.createElement('div');
+        el.setAttribute('fw-attr:style', '_game.livesEntity._style')
+        el.setAttribute('fw-content', '_game.currLive')
+        gameEl.append(el)
+
+        this.info = new Entity(0, this.pointEntity.y + this.pointEntity.h, 50, this.gameEntity.w / this.gameEntity.s, 1, {
+            position: 'absolute'
+        }, this.gameEntity);
+        this.info.style['text-align'] = 'center'
+        this.info.style['font-size'] = 30 * this.info.s + 'px'
+        this.entities.push(this.info);
+        var el = document.createElement('p');
+        el.setAttribute('fw-attr:style', '_game.livesEntity._style')
+        el.setAttribute('fw-content', '_game.instructions')
+        gameEl.append(el)
+
+
+        this.gameOverEntity = new Entity(0, (this.gameEntity.y + this.gameEntity.h / 3) - 50, this.gameEntity.h/4, this.gameEntity.w / this.gameEntity.s, 1, {
+            position: 'absolute'
+        }, this.gameEntity);
+        this.gameOverEntity.style['color'] = 'red'
+        this.gameOverEntity.style['font-size'] = 30 * this.gameOverEntity.s + 'px'
+        this.gameOverEntity.style['text-align'] = 'center'
+        this.entities.push(this.gameOverEntity);
+        var el = document.createElement('div');
+        el.setAttribute('fw-attr:style', '_game.gameOverEntity._style')
+        gameEl.append(el)
+
+
+        this.startGameEntity = new Entity(0 , (this.gameEntity.y + this.gameEntity.h / 3) - 50, this.gameEntity.h/4, this.gameEntity.w / this.gameEntity.s, 1, {
+            position: 'absolute'
+        }, this.gameEntity);
+        this.startGameEntity.style['color'] = 'red'
+        this.startGameEntity.style['font-size'] = 30 * this.startGameEntity.s + 'px'
+        this.startGameEntity.style['text-align'] = 'center'
+        var el = document.createElement('div');
+        this.entities.push(this.startGameEntity);
+        el.setAttribute('fw-attr:style', '_game.startGameEntity._style')
+        gameEl.append(el)
+
     }
 
 
@@ -460,5 +514,17 @@ export default class Game {
 
     currPoints = () => {
         return "Puntos: " + "0".repeat(5 - this.points.toString().length) + this.points;
+    }
+
+    currLive = () => {
+        return "Vidas: " + this.playerLives;
+    }
+
+    showGameOver = () => {
+        return this.gameover;
+    }
+
+    showStartGame = () => {
+        return !this.playing && !this.gameover;
     }
 }

@@ -13,6 +13,16 @@
 
 </div>
 
+<div fw-if="_game.showGameOver" fw-attr:style="_game.gameOverEntity._style" style="text-align: center">
+    <h1>GameOver</h1>
+    <h4>Press 'r' to restart</h4>
+</div>
+
+<div fw-if="_game.showStartGame" fw-attr:style="_game.startGameEntity._style"  style="text-align: center">
+    <h1>Space Invaders</h1>
+    <h4>Press 'space' to START</h4>
+</div>
+
 <script type="text/javascript" src="../js/framework.js"></script>
 <script type="module" src="../js/fw-space-invaders.js"></script>
 </body>

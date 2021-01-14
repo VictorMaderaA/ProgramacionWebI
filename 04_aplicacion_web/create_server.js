@@ -35,7 +35,7 @@ const createServer = (requestHandler) => {
     let req;
     socket.on('data', function (data) {
       let chunk = data.toString();
-      console.log(chunk)
+      // console.log(chunk)
 
       let match = /[a-zA-Z]+ [\/\.a-zA-Z0-9\-]* HTTP\/1\.1/i.test(chunk);
       if (match) {
@@ -59,7 +59,6 @@ const createServer = (requestHandler) => {
           req.body = chunk.substring(d_index, chunk.length);
         }
       } else if (segmentado) {
-          console.log(2);
         req.body += chunk;
       }
 
