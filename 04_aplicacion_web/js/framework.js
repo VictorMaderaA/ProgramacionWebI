@@ -148,14 +148,20 @@ getStateAttribute = (state, searchStr) => {
     let val = state;
     for (const e of searchStr.split(".")) {
         if (val.hasOwnProperty(e)){
-            val = val[e]
+            if(typeof val[e] === 'function'){
+                val = val[e]();
+            }else{
+                val = val[e]
+            }
         }else{
-            console.error('Could not Find prop: ' + searchStr + ' >>> ' + e + ' | ' + val + JSON.stringify(val))
+
+            let err = 'Could not Find prop: ' + searchStr + ' >>> ' + e + ' | ' + val + JSON.stringify(val);
+            console.error(err.length > 100 ? err.substr(0, 100) + "..." : err);
             val = undefined;
             break;
         }
     }
-    return Object.assign(val);
+    return (typeof val === "undefined")? undefined : Object.assign(val);
 }
 
 let _listeners = []

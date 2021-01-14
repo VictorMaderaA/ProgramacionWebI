@@ -19,7 +19,6 @@ export default class Game {
     alienBulletEntity = null;
     currAlienSpeed = 1;
     playerLives = 3;
-
     points = 0;
 
 
@@ -98,6 +97,7 @@ export default class Game {
         this.deadAliens = 0;
         this.destructables = [];
         this.aliveAliens = 100;
+        this.points = 0;
     }
 
 
@@ -140,6 +140,15 @@ export default class Game {
         el.setAttribute('fw-attr:style', '_game.playerEntity._style')
         gameEl.append(el)
 
+
+        this.pointEntity = new Entity(this.gameEntity.x, this.gameEntity.x + this.gameEntity.h + 10, 20, 100, 1, {
+            position: 'absolute'
+        }, this.gameEntity);
+        this.entities.push(this.playerEntity);
+        var el = document.createElement('div');
+        el.setAttribute('fw-attr:style', '_game.pointEntity._style')
+        el.setAttribute('fw-content', '_game.currPoints')
+        gameEl.append(el)
     }
 
 
@@ -239,13 +248,13 @@ export default class Game {
             return;
         }
 
-        if(this.playerLives <= 0){
+        if (this.playerLives <= 0) {
             this.playing = false;
             this.gameover = true;
             console.log('Player Killed')
         }
 
-        if(this.aliveAliens <= 0){
+        if (this.aliveAliens <= 0) {
             this.playing = false;
             this.gameover = true;
             console.log('Win all aliens killed')
@@ -260,7 +269,7 @@ export default class Game {
         this._updatePlayerBullet(delta)
     }
 
-    _updatePlayerBullet(delta){
+    _updatePlayerBullet(delta) {
         let bulletPlayer = this.playerBulletEntity;
         if (!bulletPlayer) {
             return;
@@ -268,15 +277,19 @@ export default class Game {
         bulletPlayer.moveSpeed(0, this.config.bullet.speedP * -1, delta)
 
         this.destructables.forEach(e => {
-            if(e === bulletPlayer || e === this.playerEntity){
+            if (e === bulletPlayer || e === this.playerEntity) {
                 return;
             }
             if (aabbDetection(bulletPlayer, e)) {
                 this._removeEntityFromDestructables(bulletPlayer)
                 this._removeEntityFromDestructables(e)
                 this._destroyPlayerBullet();
-                if(e.type === 'alien'){
+                if (e.type === 'alien') {
+                    this.points += 100
                     this.destroyAlien(e);
+                }
+                if (e.type === 'bullet') {
+                    this.points += 10
                 }
             }
         })
@@ -286,7 +299,7 @@ export default class Game {
         }
     }
 
-    _updateAlienBullet(delta){
+    _updateAlienBullet(delta) {
         let bulletAlien = this.alienBulletEntity;
         if (!bulletAlien) {
             return;
@@ -294,16 +307,16 @@ export default class Game {
         bulletAlien.moveSpeed(0, this.config.bullet.speedA, delta)
 
         this.destructables.forEach(e => {
-            if(e === bulletAlien || e.type === 'alien'){
+            if (e === bulletAlien || e.type === 'alien') {
                 return;
             }
             if (aabbDetection(bulletAlien, e)) {
                 this._removeEntityFromDestructables(bulletAlien)
                 this._destroyAlienBullet();
-                if(e.type === 'player'){
+                if (e.type === 'player') {
                     console.log('Player Shot')
                     this.playerLives--;
-                }else{
+                } else {
                     this._removeEntityFromDestructables(e)
                 }
             }
@@ -314,7 +327,7 @@ export default class Game {
         }
     }
 
-    _removeEntityFromDestructables(ent){
+    _removeEntityFromDestructables(ent) {
         var index = this.destructables.indexOf(ent);
         if (index !== -1) this.destructables.splice(index, 1);
     }
@@ -343,12 +356,12 @@ export default class Game {
             if (alien.dead) {
                 dead++;
                 continue;
-            }else{
+            } else {
                 alive++;
             }
 
 
-            if(shoot && Math.random() > 0.99){
+            if (shoot && Math.random() > 0.99) {
                 this.alienShoot(alien)
             }
 
@@ -360,7 +373,7 @@ export default class Game {
                 alienColide = true
             } else if (this.alienDirection && (alien.x + 10 * this.gameEntity.s + alien.w) > this.gameEntity.w + this.gameEntity.x) {
                 alienColide = true
-            } else if((alien.y + alien.h) > this.playerEntity.y){
+            } else if ((alien.y + alien.h) > this.playerEntity.y) {
                 this.playing = false
                 this.gameover = true
             }
@@ -382,9 +395,9 @@ export default class Game {
 
     destroyAlien(id) {
         let alien;
-        if(typeof id === "object"){
+        if (typeof id === "object") {
             alien = id;
-        }else {
+        } else {
             alien = this.aliens[id];
         }
         alien.dead = true;
@@ -445,5 +458,7 @@ export default class Game {
         gameEl.append(el)
     }
 
-
+    currPoints = () => {
+        return "Puntos: " + "0".repeat(5 - this.points.toString().length) + this.points;
+    }
 }
