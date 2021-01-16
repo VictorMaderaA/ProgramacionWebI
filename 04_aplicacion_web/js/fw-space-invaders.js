@@ -2,25 +2,16 @@ import Game from "./spaceInvaders/Game.js";
 const app = {
     rootElementId: "root",
     initialState: {
+        PRODUCTION: true,
         game: {
-            tickTime: 10,
-            // loops: [
-            //     {
-            //         method: (state) => {
-            //             state.src.alien1 = state.loops.alien ? '/assets/InvaderA1.svg' : '/assets/InvaderA2.svg';
-            //             state.src.alien2 = state.loops.alien ? '/assets/InvaderB1.svg' : '/assets/InvaderB2.svg';
-            //             state.loops.alien = !state.loops.alien;
-            //             return state;
-            //         },
-            //         time: 300,
-            //     },
-            // ],
+            tickTime: 1,
             lastUpdate: null,
             delta: 0,
         },
     },
     handlers: {
         onKeyDown: (state, event) => {
+            // console.log(event.keyCode)
             switch (event.keyCode){
                 case 37: //Izquierda
                     state.keyLeft = true;
@@ -43,6 +34,22 @@ const app = {
                     if(state._game.playing || state._game.gameover){
                         state._game.initGameDom();
                     }
+                    break;
+
+                case 49: //R
+                    console.log("Scale 0.5");
+                    state._game.config.game.s = 0.5
+                    state._game.initGameDom()
+                    break;
+                case 50: //R
+                    console.log("Scale 1");
+                    state._game.config.game.s = 1
+                    state._game.initGameDom()
+                    break;
+                case 51: //R
+                    console.log("Scale 2");
+                    state._game.config.game.s = 2
+                    state._game.initGameDom()
                     break;
                 default:
                     break;
@@ -85,7 +92,6 @@ const app = {
             if(!state._game.playing){
                 return;
             }
-            // state = app.methods.runCustomLoop(state, app.initialState.game.loops);
             state = app.methods.playerLoop(state);
             state._game.update(state.delta.val)
             let ent = state._game.entities;
@@ -106,20 +112,6 @@ const app = {
                 state._game.playerShoot();
             }
 
-            return state;
-        },
-
-        runCustomLoop: (state, loops) => {
-            loops.forEach(l => {
-                l.delta = (l.delta?? 0) + state.delta.val;
-                if (l.delta > l.time) {
-                    let _state;
-                    if ((_state = l.method(state)) !== undefined) {
-                        state = _state;
-                    }
-                    l.delta = 0;
-                }
-            });
             return state;
         },
     }

@@ -110,8 +110,8 @@ updateStyle = (root, state, handlers) => {
         if (typeof style === "object") {
             for (const property in style) {
                 let val = style[property];
-                if (typeof val === "number"){
-                    val = val+'px';
+                if (typeof val === "number") {
+                    val = val + 'px';
                 }
                 e.style[property] = val
             }
@@ -147,15 +147,30 @@ update = (root, state, handlers) => {
 getStateAttribute = (state, searchStr) => {
     let val = state;
     for (const e of searchStr.split(".")) {
-        if (val.hasOwnProperty(e)){
-            val = val[e]
-        }else{
-            console.error('Could not Find prop: ' + searchStr + ' >>> ' + e + ' | ' + val + JSON.stringify(val))
+        if (val.hasOwnProperty(e)) {
+            stateAttributeDebug(searchStr, val);
+            if (typeof val[e] === 'function') {
+                val = val[e]();
+            } else {
+                val = val[e]
+            }
+        } else {
+            if (typeof state.PRODUCTION !== 'undefined' && state.PRODUCTION === false) {
+                let err = 'Could not Find prop: ' + searchStr + ' >>> ' + e + ' | ' + val + JSON.stringify(val);
+                console.error(err.length > 100 ? err.substr(0, 100) + "..." : err);
+            }
             val = undefined;
             break;
         }
     }
-    return Object.assign(val);
+    return (typeof val === "undefined") ? undefined : val;
+}
+
+stateAttributeDebug = (searchStr, val) => {
+    let search = undefined;
+    if (searchStr === search) {
+        console.log("val =", val.e, val);
+    }
 }
 
 let _listeners = []
@@ -168,7 +183,7 @@ setListeners = (rootElementId, initialState, handlers) => {
         let query = '[' + 'fw-on\\:' + pEvent + ']';
         document.querySelectorAll(query).forEach(e => {
             let store = {q: query, e: e};
-            if(_listeners.find(x => x.q === store.q && x.e === store.e)){
+            if (_listeners.find(x => x.q === store.q && x.e === store.e)) {
                 return;
             }
             _listeners.push({q: query, e: e})

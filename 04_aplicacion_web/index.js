@@ -1,5 +1,5 @@
 const createServer = require("./create_server.js");
-const reqHandler = require("./js/requestHandlers.js");
+const reqHandler = require("./requestHandlers.js");
 
 
 const requestListener = (request, response) => {
