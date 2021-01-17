@@ -6,7 +6,6 @@ response = (code, headers, body) => {
 }
 
 
-
 getHandlers = (request) => {
 
     switch (request.path) {
@@ -27,9 +26,17 @@ getHandlers = (request) => {
                 fs.readFileSync('./src/space-invaders.html')
             );
             break;
+        case '/points':
+            response(
+                "200", {
+                    "content-type": "text"
+                },
+                fs.readFileSync('./records').toString()
+            );
+            break;
         default:
             headers = {};
-            switch (request.path.split('.').pop()){
+            switch (request.path.split('.').pop()) {
                 case 'svg':
                     headers['content-type'] = 'image/svg+xml';
                     break;
@@ -54,7 +61,7 @@ getHandlers = (request) => {
             }
             response(
                 200, headers,
-                fs.readFileSync('.'+request.path)
+                fs.readFileSync('.' + request.path)
             );
             break;
     }
@@ -62,6 +69,30 @@ getHandlers = (request) => {
 
 postHandlers = (request) => {
 
+    switch (request.path) {
+        case '/points':
+            var d = new Date,
+                dformat = [d.getMonth() + 1,
+                        d.getDate(),
+                        d.getFullYear()].join('/') + ' ' +
+                    [d.getHours(),
+                        d.getMinutes(),
+                        d.getSeconds()].join(':');
+            let f = fs.readFileSync('./records').toString() + dformat + " " + request.body + " " + request.headers['USER-AGENT'] + "\n";
+            fs.writeFileSync('./records', f, function (err, data) {
+                if (err) {
+                    return console.error(err);
+                }
+                console.log(data);
+            });
+            response(
+                "200", {
+                    "content-type": "text"
+                },
+                fs.readFileSync('./records').toString()
+            );
+            break;
+    }
 
 
 }
@@ -89,7 +120,8 @@ reqHandler = (request, server) => {
         }
     }
 }
-function test(){
+
+function test() {
 
 }
 

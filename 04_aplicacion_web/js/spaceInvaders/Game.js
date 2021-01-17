@@ -305,12 +305,14 @@ export default class Game {
         if (this.playerLives <= 0) {
             this.playing = false;
             this.gameover = true;
+            this.storePoints(this.points)
             console.log('Player Killed')
         }
 
         if (this.aliveAliens <= 0) {
             this.playing = false;
             this.gameover = true;
+            this.storePoints(this.points)
             console.log('Win all aliens killed')
         }
 
@@ -511,6 +513,25 @@ export default class Game {
         b.element = el;
         gameEl.append(el)
     }
+
+    storePoints(points){
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "text/plain");
+
+        var raw = "Points: " + points;
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw
+        };
+
+        fetch("http://localhost:8080/points", requestOptions)
+            .then(response => response.text())
+            .then(result => console.log(result))
+            .catch(error => console.log('error', error));
+    }
+
 
     currPoints = () => {
         return "Puntos: " + "0".repeat(5 - this.points.toString().length) + this.points;
